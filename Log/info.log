@@ -1,2 +1,0 @@
-00:07:35.253 INFO  [-SpringApplicationShutdownHook] io.undertow : - stopping server: Undertow - 2.2.17.Final
-00:07:35.261 INFO  [-SpringApplicationShutdownHook] io.undertow.servlet : - Destroying Spring FrameworkServlet 'dispatcherServlet'
