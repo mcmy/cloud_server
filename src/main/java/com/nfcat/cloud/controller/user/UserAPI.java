@@ -1,8 +1,9 @@
-package com.nfcat.cloud.controller;
+package com.nfcat.cloud.controller.user;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.nfcat.cloud.annotation.JSONBody;
 import com.nfcat.cloud.config.WebConfig;
+import com.nfcat.cloud.enums.ConstantData;
 import com.nfcat.cloud.enums.ResultCode;
 import com.nfcat.cloud.server.HttpToken;
 import com.nfcat.cloud.sql.entity.NfUser;
@@ -25,17 +26,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.Map;
 
 @Slf4j
 @JSONBody
 @Validated
 @Controller
-@RequestMapping("/api")
+@RequestMapping("/api/user")
 @RequiredArgsConstructor
-public class IndexAPI {
-
+public class UserAPI {
     public final NfUserMapper userMapper;
     public final HttpServletRequest request;
     public final HttpServletResponse response;
@@ -46,17 +44,28 @@ public class IndexAPI {
         return new HttpToken(redisUtil, request, response);
     }
 
-    @PostMapping("/test")
-    public Object test() {
+    @PostMapping("/login")
+    public Object login(@Valid @RequestBody UserLogin.@NotNull RequestData data){
+        final NfUser nfUser = userMapper.selectOne(new QueryWrapper<NfUser>().lambda()
+                .eq(NfUser::getUsername, data.getUsername())
+                .and(wq -> wq.eq(NfUser::getPassword, NfUtils.pwdEncrypt(data.getPassword(), WebConfig.SALT))));
+        Assert.notNull(nfUser, ResultCode.USER_LOGIN_FAIL);
         HttpToken httpToken = getToken();
-        httpToken.setAttribute("nb1", 1);
-        httpToken.setAttribute("nb", 1);
-        httpToken.delAttribute("nb");
-        Map<String, Object> map = new HashMap<>();
-        map.put("query", httpToken.getRequest().getQueryString());
-        map.put("nb1", httpToken.getAttribute("nb1"));
-        map.put("map", httpToken.getAllAttribute());
-        map.put("nMap", httpToken.getNativeAllAttribute());
-        return map;
+        httpToken.setAttribute(ConstantData.USER_SESSION_DATA,nfUser);
+        return nfUser;
     }
+
+    @PostMapping("/reg")
+    public Object reg(@Valid @RequestBody(required = false) UserReg.@NotNull RequestData data) {
+        //TODO 登录
+        return data;
+    }
+
+    @PostMapping("/info")
+    public Object info() {
+        HttpToken httpToken = getToken();
+        return httpToken.getAttribute(ConstantData.USER_SESSION_DATA);
+    }
+
+
 }

@@ -204,7 +204,7 @@
                 <tr>
                     <td align="left"
                         style="font-size: 13px; line-height: 18px; font-family: Helvetica, Arial, sans-serif; color:#aaaaaa;"
-                        class="padding">Youâ€™re receiving this email because you have signed up for our products and
+                        class="padding">You¡¯re receiving this email because you have signed up for our products and
                         services.
                     </td>
                 </tr>
