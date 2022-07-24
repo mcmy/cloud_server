@@ -6,6 +6,6 @@
 </head>
 <body>
 <h1>Hello boy</h1><br>
-<p>��ǰʱ�䣺${.now?string("yyyy-MM-dd HH:mm:ss.sss")}</p>
+<p>当前时间：${.now?string("yyyy-MM-dd HH:mm:ss.sss")}</p>
 </body>
 </html>

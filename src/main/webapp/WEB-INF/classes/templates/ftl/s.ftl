@@ -11,16 +11,16 @@
 </style>
 <body>
 
-<div><b>���⣺Ӧ�������������</b></div>
+<div><b>标题：应用升级发布审核</b></div>
 <p></p>
-<div><b>���ݣ�Dear cloud_server</b></div>
-<p><b>���ã���һ��Ӧ������������Ҫ������ˣ��������ӽ�����ˡ�</b></p>
-<p><b>�����ߣ�</b><a href="${email}">${email}</a></p>
-<p><b>��Ŀ���ƣ�${projectName}</b></p>
-<p><b>Ӧ�����ƣ�${appName}</b></p>
+<div><b>内容：Dear cloud_server</b></div>
+<p><b>您好：有一个应用升级发布需要您的审核，请点击链接进行审核。</b></p>
+<p><b>发起者：</b><a href="${email}">${email}</a></p>
+<p><b>项目名称：${projectName}</b></p>
+<p><b>应用名称：${appName}</b></p>
 <p><a href="${url}" target="_blank">${url}</a></p>
-<p><b>�뾡����ˣ�лл��</b></p>
-<p>(ϵͳ���ͣ�����ֱ�ӻظ�)</p>
+<p><b>请尽快审核，谢谢！</b></p>
+<p>(系统发送，请勿直接回复)</p>
 
 </body>
 </html>
