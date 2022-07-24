@@ -57,7 +57,7 @@ public class UserAPI {
 
     @PostMapping("/reg")
     public Object reg(@Valid @RequestBody(required = false) UserReg.@NotNull RequestData data) {
-        //TODO 登录
+        //TODO 注册
         return data;
     }
 
