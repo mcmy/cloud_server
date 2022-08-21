@@ -1,4 +1,4 @@
-package com.nfcat.cloud.utils;
+package com.nfcat.cloud.common.utils;
 
 
 import org.jetbrains.annotations.Contract;

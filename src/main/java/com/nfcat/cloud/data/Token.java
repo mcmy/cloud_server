@@ -15,7 +15,6 @@ import java.util.Map;
 @Accessors(chain = true)
 public class Token {
     public String token;
-    public String refreshToken;
     public LocalDateTime createTime;
     public LocalDateTime refreshTime;
 
@@ -23,7 +22,6 @@ public class Token {
         Map<String, Object> map = new HashMap<>();
         map.put("token", token);
         map.put("createTime", createTime);
-        map.put("refreshToken", refreshToken);
         map.put("refreshTime", refreshTime);
         return map;
     }
@@ -33,7 +31,6 @@ public class Token {
         return new Token()
                 .setToken(toString(map.get("token")))
                 .setCreateTime(toLocalDateTime(map.get("createTime")))
-                .setRefreshToken(toString(map.get("refreshToken")))
                 .setRefreshTime(toLocalDateTime(map.get("refreshTime")));
     }
 

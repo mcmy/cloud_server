@@ -1,16 +1,17 @@
 package com.nfcat.cloud.server;
 
-import com.alibaba.fastjson.JSONObject;
+import com.nfcat.cloud.common.utils.NanoIdUtils;
+import com.nfcat.cloud.common.utils.RedisUtil;
 import com.nfcat.cloud.data.Token;
 import com.nfcat.cloud.enums.ConstantData;
-import com.nfcat.cloud.utils.NanoIdUtils;
-import com.nfcat.cloud.utils.RedisUtil;
+import com.nfcat.cloud.enums.ResultCode;
+import com.nfcat.cloud.exception.AssertException;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,41 +20,90 @@ import java.util.Map;
 public class HttpToken {
 
     private final RedisUtil redisUtil;
-    private final HttpServletRequest request;
-    private final HttpServletResponse response;
     private final Token token;
-    private final String itemPrefix = "data-";
-    private final String redisPrefix;
 
-    private static final String tokenName = "X-TOKEN";
+    private String redisPrefix;
+
+    private static final String tokenName = "X-AUTH-TOKEN";
     private static final long maxSeconds = 86400;
     private static final long refreshSeconds = 7200;
+    private static final String itemPrefix = "data-";
+    private static final String redisPrefixPrefix = "nfcat:cloud:token:";
 
+    /**
+     * 获取token(不存在抛出异常)
+     *
+     * @param request HttpServletRequest
+     * @return HttpToken
+     */
+    public static HttpToken getInstance(@NotNull HttpServletRequest request) {
+        if (request.getAttribute(ConstantData.HTTP_TOKEN) instanceof HttpToken httpToken) {
+            return httpToken;
+        }
+        throw new AssertException(ResultCode.NOT_TOKEN);
+    }
+
+    /**
+     * 新建token
+     * @param redisUtil RedisUtil
+     * @param request HttpServletRequest
+     * @param response HttpServletResponse
+     */
     public HttpToken(RedisUtil redisUtil, HttpServletRequest request, HttpServletResponse response) {
         this.redisUtil = redisUtil;
-        this.request = request;
-        this.response = response;
-        String tokenString = getTokenString();
-        this.redisPrefix = "nfcat:cloud:token:" + tokenString;
-        this.token = new Token().setToken(tokenString);
-        if (!validRedisToken()) {
-            buildToken(tokenString);
+        this.token = new Token();
+        final String requestTokenString = getRequestTokenString(request);
+        if (requestTokenString != null) {
+            redisPrefix = redisPrefixPrefix + requestTokenString;
+            if (validRedisToken()) {
+                //用户上传token并且token有效
+                token.setToken(requestTokenString);
+                return;
+            }
         }
-    }
-
-    public @NotNull Token buildToken(String tokenString) {
-        this.token.setCreateTime(LocalDateTime.now());
+        //用户上传token但是token无效 || 用户未上传token
+        LocalDateTime now = LocalDateTime.now();
+        token.setToken(NanoIdUtils.randomNanoId())
+                .setCreateTime(now)
+                .setRefreshTime(now);
+        redisPrefix = redisPrefixPrefix + token.getToken();
+        redisUtil.hmset(redisPrefix,token.buildMap(),refreshSeconds);
         response.setHeader(tokenName, token.getToken());
-        return refreshToken();
     }
 
-    public @NotNull Token refreshToken() {
-        token.setRefreshToken(NanoIdUtils.randomNanoId())
-                .setRefreshTime(LocalDateTime.now());
-        redisUtil.hmset(redisPrefix, token.buildMap(), refreshSeconds);
-        return token;
+    /**
+     * 获取用户请求的token值
+     * 如果不存在返回null
+     *
+     * @param request HttpServletRequest
+     * @return tokenString
+     */
+    public static @Nullable String getRequestTokenString(@NotNull HttpServletRequest request) {
+        if (request.getAttribute(ConstantData.HTTP_TOKEN_STRING) instanceof String s) {
+            return s;
+        }
+        String sQuery = request.getParameter("token");
+        if (sQuery != null && sQuery.length() > 10) return setRequestTokenStringAttr(request, sQuery);
+        String sHeader = request.getHeader(tokenName);
+        if (sHeader != null && sHeader.length() > 10) return setRequestTokenStringAttr(request, sHeader);
+        return null;
     }
 
+    /**
+     * 设置输入tokenString Attr
+     * @param request HttpServletRequest
+     * @param tokenString tokenString
+     * @return tokenString
+     */
+    public static String setRequestTokenStringAttr(@NotNull HttpServletRequest request, String tokenString) {
+        request.setAttribute(ConstantData.HTTP_TOKEN_STRING, tokenString);
+        return tokenString;
+    }
+
+    /**
+     * 验证token是否过期
+     * @return is
+     */
     public boolean validRedisToken() {
         LocalDateTime c = getRedisCreateTime();
         if (c == null) return false;
@@ -63,6 +113,16 @@ public class HttpToken {
         token.setRefreshTime(r);
         return c.plusSeconds(maxSeconds).isAfter(LocalDateTime.now())
                 && r.plusSeconds(refreshSeconds).isAfter(LocalDateTime.now());
+    }
+
+    /**
+     * 续期token
+     * @return Token
+     */
+    public @NotNull Token refreshToken() {
+        token.setRefreshTime(LocalDateTime.now());
+        redisUtil.hset(redisPrefix, "refreshTime", token.getRefreshTime(), refreshSeconds);
+        return token;
     }
 
     public LocalDateTime getRedisCreateTime() {
@@ -77,12 +137,6 @@ public class HttpToken {
             return l;
         }
         return null;
-    }
-
-    public String getTokenString() {
-        String s = request.getHeader(tokenName);
-        if (s == null || s.length() < 10) return NanoIdUtils.randomNanoId();
-        return s;
     }
 
     public void destroyToken() {
@@ -117,37 +171,5 @@ public class HttpToken {
 
     public boolean setAttribute(String item, Object data) {
         return redisUtil.hset(redisPrefix, itemPrefix + item, data);
-    }
-
-    public JSONObject getRequestJson() {
-        if (request.getAttribute(ConstantData.REQUEST_ATTR_MAP) instanceof JSONObject jsonObject) {
-            return jsonObject;
-        }
-        final String contentType = request.getContentType();
-        if (contentType == null) {
-            return setRequestJson();
-        } else if (contentType.contains("application/x-www-form-urlencoded")) {
-            final Map<String, String[]> parameterMap = request.getParameterMap();
-            JSONObject jsonObject = new JSONObject();
-            parameterMap.forEach((key, value) -> jsonObject.put(key, value[value.length - 1]));
-            return setRequestJson(jsonObject);
-        } else if (contentType.contains("application/json")) {
-            StringBuilder stringBuilder = new StringBuilder();
-            try {
-                request.getReader().lines().forEach(stringBuilder::append);
-            } catch (IOException ignored) {
-            }
-            return setRequestJson(JSONObject.parseObject(stringBuilder.toString()));
-        }
-        return setRequestJson();
-    }
-
-    public JSONObject setRequestJson(JSONObject jsonObject) {
-        request.setAttribute(ConstantData.REQUEST_ATTR_MAP, jsonObject);
-        return jsonObject;
-    }
-
-    public JSONObject setRequestJson() {
-        return setRequestJson(new JSONObject());
     }
 }

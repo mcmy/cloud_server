@@ -1,5 +1,6 @@
 package com.nfcat.cloud.validate;
 
+import com.nfcat.cloud.common.Encrypt;
 import com.nfcat.cloud.enums.MatcherString;
 import com.nfcat.cloud.enums.ResultCode;
 import com.nfcat.cloud.interfaces.RequestValidateInterface;
@@ -25,22 +26,47 @@ public class UserReg {
     @AllArgsConstructor
     public static class RequestData implements Serializable {
         private String username;
+        private String phone;
+        private String email;
         private String password;
+        private String type;
         private String verifyCode;
         private String verify_code;
+
+
+        public String getPassword() {
+            return Encrypt.encryptUserPassword(password);
+        }
 
         public String getVerifyCode() {
             return verifyCode == null ? verify_code : verifyCode;
         }
     }
 
-    public static class RequestDataValidator implements ConstraintValidator<VerifyAnnotation, RequestData>, RequestValidateInterface {
+    static class RequestDataValidator implements ConstraintValidator<VerifyAnnotation, RequestData>, RequestValidateInterface {
         @Override
         public boolean isValid(@NotNull UserReg.RequestData data, ConstraintValidatorContext context) {
-            if (!MatcherString.USERNAME.matcher(data.getUsername())) doErrMsg(ResultCode.USER_USERNAME_INPUT_FAIL);
             if (!MatcherString.PASSWORD.matcher(data.getPassword())) doErrMsg(ResultCode.USER_PASSWORD_INPUT_FAIL);
             if (data.getVerifyCode() == null || data.getVerifyCode().length() < 1)
                 doErrMsg(ResultCode.VERIFY_CODE_FAILED);
+            switch (data.getType()) {
+                case "phone" -> {
+                    if (!MatcherString.PHONE.matcher(data.getPhone()))
+                        doErrMsg(ResultCode.PHONE_FORMAT_ERROR);
+                    return true;
+                }
+                case "email" -> {
+                    if (!MatcherString.EMAIL.matcher(data.getEmail()))
+                        doErrMsg(ResultCode.EMAIL_FORMAT_ERROR);
+                    return true;
+                }
+                case "username" -> {
+                    if (!MatcherString.USERNAME.matcher(data.getUsername()))
+                        doErrMsg(ResultCode.USER_USERNAME_INPUT_FAIL);
+                    return true;
+                }
+            }
+            doErrMsg(ResultCode.MISSING_PARAMETERS);
             return true;
         }
     }

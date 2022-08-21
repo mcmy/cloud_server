@@ -6,7 +6,7 @@ import com.nfcat.cloud.annotation.JSONBodyExclude;
 import com.nfcat.cloud.data.JsonResponse;
 import com.nfcat.cloud.enums.ConstantData;
 import com.nfcat.cloud.enums.ResultCode;
-import com.nfcat.cloud.utils.RedisUtil;
+import com.nfcat.cloud.common.utils.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.jetbrains.annotations.NotNull;

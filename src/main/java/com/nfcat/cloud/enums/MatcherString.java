@@ -1,6 +1,6 @@
 package com.nfcat.cloud.enums;
 
-import com.nfcat.cloud.utils.TypeConversionTool;
+import com.nfcat.cloud.common.utils.TypeConversionTool;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 

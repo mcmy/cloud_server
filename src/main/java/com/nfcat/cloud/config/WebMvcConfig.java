@@ -3,6 +3,7 @@ package com.nfcat.cloud.config;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+import com.nfcat.cloud.interceptor.PermissionInterceptor;
 import com.nfcat.cloud.interceptor.RequestInitInterceptor;
 import com.nfcat.cloud.interceptor.ResponseFormatJsonInterceptor;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     private final RequestInitInterceptor characterEncoding;
     private final ResponseFormatJsonInterceptor responseFormatJsonInterceptor;
+    private final PermissionInterceptor permissionInterceptor;
 
     @Override
     public void addReturnValueHandlers(@NotNull List<HandlerMethodReturnValueHandler> returnValueHandlers) {
@@ -36,6 +38,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(@NotNull InterceptorRegistry registry) {
         registry.addInterceptor(characterEncoding);
+        registry.addInterceptor(permissionInterceptor);
     }
 
     @Override

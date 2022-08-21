@@ -1,5 +1,6 @@
 package com.nfcat.cloud.validate;
 
+import com.nfcat.cloud.common.Encrypt;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,5 +20,9 @@ public class UserLogin {
         private String username;
         @Length(min = 8, max = 20, message = "密码格式错误")
         private String password;
+
+        public String getPassword() {
+            return Encrypt.encryptUserPassword(password);
+        }
     }
 }

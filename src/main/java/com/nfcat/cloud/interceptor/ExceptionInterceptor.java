@@ -106,9 +106,9 @@ public class ExceptionInterceptor implements ErrorController {
 
     //其他全部错误
     @ResponseBody
-    @ExceptionHandler(value = {Exception.class, Throwable.class})
-    public ModelAndView error(@NotNull Exception ex) {
-        return errorHTML(ex, 500, "程序属性错误");
+    @ExceptionHandler(value = {Throwable.class})
+    public String error(@NotNull Exception ex) {
+        return errorJSON(ex, new JsonResponse(201, ex.getMessage()));
     }
 
     public ModelAndView errorHTML(int code, String msg) {

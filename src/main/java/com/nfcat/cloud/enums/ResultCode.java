@@ -62,6 +62,8 @@ public enum ResultCode implements Serializable {
     //3000系列验证错误
     VERIFY_CODE_FAILED(3000, "验证码错误"),
     VERIFY_CODE_TIME_OVERDUE(3001, "验证码过期"),
+    NOT_TOKEN(3002, "无TOKEN"),
+    REDIS_SERVER_ERROR(3003, "Redis服务异常"),
 
     //数据操作错误
     INSERT_FAILED(4000, "插入失败"),

@@ -5,12 +5,14 @@
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.nfcat.cloud.sql.entity.NfUser">
         <id column="id" property="id" />
+        <result column="nano_id" property="nanoId" />
         <result column="username" property="username" />
         <result column="nickname" property="nickname" />
         <result column="password" property="password" />
         <result column="header_img" property="headerImg" />
         <result column="sex" property="sex" />
         <result column="email" property="email" />
+        <result column="phone" property="phone" />
         <result column="wx_id" property="wxId" />
         <result column="vip" property="vip" />
         <result column="svip" property="svip" />
@@ -28,7 +30,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, username, nickname, password, header_img, sex, email, wx_id, vip, svip, gold, membership_points, cny, safety_score, user_group, parent_user, state, user_info, reg_time, info
+        id, nano_id, username, nickname, password, header_img, sex, email, phone, wx_id, vip, svip, gold, membership_points, cny, safety_score, user_group, parent_user, state, user_info, reg_time, info
     </sql>
 
 </mapper>

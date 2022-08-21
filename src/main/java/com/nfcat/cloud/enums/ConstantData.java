@@ -21,6 +21,8 @@ public class ConstantData {
     public static final String WX_CALL_BACK_EXPIRED_TIME = "callBackJsonExpiredTime";
     public static final String WX_INFO = "wxInfo";
     public static final String WX_LOCAL_LOGIN_BACK = "wxLocalLoginBack";
+    public static final String HTTP_TOKEN = "http_token";
+    public static final String HTTP_TOKEN_STRING = "http_token_string";
 
     public static final SerializerFeature[] serializerFeatures = new SerializerFeature[]{
             SerializerFeature.WriteDateUseDateFormat,

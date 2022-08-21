@@ -4,11 +4,12 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import java.io.Serializable;
-import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -16,7 +17,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author nfcat
- * @since 2022-07-15
+ * @since 2022-07-29
  */
 @Getter
 @Setter
@@ -27,10 +28,16 @@ public class NfUser implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 用户ID
+     * 数据库自增id
      */
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
+
+    /**
+     * 用户id
+     */
+    @TableField("nano_id")
+    private String nanoId;
 
     /**
      * 用户名
@@ -67,6 +74,12 @@ public class NfUser implements Serializable {
      */
     @TableField("email")
     private String email;
+
+    /**
+     * 手机号
+     */
+    @TableField("phone")
+    private String phone;
 
     /**
      * 微信开放ID

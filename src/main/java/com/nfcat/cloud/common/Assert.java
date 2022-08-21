@@ -1,4 +1,4 @@
-package com.nfcat.cloud.utils;
+package com.nfcat.cloud.common;
 
 import com.nfcat.cloud.enums.ResultCode;
 import com.nfcat.cloud.exception.AssertException;

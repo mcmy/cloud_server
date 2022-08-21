@@ -1,7 +1,6 @@
 package com.nfcat.cloud;
 
-import com.nfcat.cloud.config.WebConfig;
-import com.nfcat.cloud.utils.NfUtils;
+import com.nfcat.cloud.common.utils.NfUtils;
 
 public class SimpleTest {
     public static void main(String[] args) {

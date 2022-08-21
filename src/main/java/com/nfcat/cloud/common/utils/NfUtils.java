@@ -1,4 +1,4 @@
-package com.nfcat.cloud.utils;
+package com.nfcat.cloud.common.utils;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
