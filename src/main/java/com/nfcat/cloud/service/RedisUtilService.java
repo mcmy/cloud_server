@@ -1,5 +1,6 @@
-package com.nfcat.cloud.common.utils;
+package com.nfcat.cloud.service;
 
+import com.nfcat.cloud.common.utils.TypeConversionTool;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -14,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public final class RedisUtil {
+public final class RedisUtilService {
 
     public final RedisTemplate<String, Object> redisTemplate;
 

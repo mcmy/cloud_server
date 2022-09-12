@@ -9,6 +9,7 @@ import com.nfcat.cloud.enums.ResultCode;
 import com.nfcat.cloud.exception.AssertException;
 import com.nfcat.cloud.interfaces.RequestValidateInterface;
 import com.nfcat.cloud.sql.entity.NfUser;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -63,7 +64,6 @@ public class UserUpdateInfo {
             public LambdaUpdateWrapper<NfUser> getLambda(NfUser oldNfUser) {
                 for (SFunction<NfUser, ?> nfUserSFunction : sFunctionList) {
                     Object o = nfUserSFunction.apply(RequestData.this);
-                    System.out.printf("---%s---%s---\n",o,nfUserSFunction.apply(oldNfUser));
                     if (o != null && !o.equals(nfUserSFunction.apply(oldNfUser))) {
                         lambda.set(nfUserSFunction, o);
                         ++num;
@@ -79,7 +79,8 @@ public class UserUpdateInfo {
     }
 
 
-    static class RequestDataValidator implements ConstraintValidator<VerifyAnnotation, RequestData>, RequestValidateInterface {
+    @NoArgsConstructor
+    public static class RequestDataValidator implements ConstraintValidator<VerifyAnnotation, RequestData>, RequestValidateInterface {
         @Override
         public boolean isValid(@NotNull RequestData data, ConstraintValidatorContext context) {
             if (data.getPassword() != null && !MatcherString.PASSWORD.matcher(data.getPassword())) {

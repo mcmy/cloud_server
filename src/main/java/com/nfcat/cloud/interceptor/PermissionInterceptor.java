@@ -2,14 +2,11 @@ package com.nfcat.cloud.interceptor;
 
 import com.nfcat.cloud.annotation.AutoAuthentication;
 import com.nfcat.cloud.annotation.AutoGenToken;
-import com.nfcat.cloud.common.utils.RedisUtil;
-import com.nfcat.cloud.common.utils.TypeConversionTool;
+import com.nfcat.cloud.service.RedisUtilService;
 import com.nfcat.cloud.enums.ConstantData;
 import com.nfcat.cloud.enums.ResultCode;
 import com.nfcat.cloud.exception.AssertException;
-import com.nfcat.cloud.exception.CloudException;
-import com.nfcat.cloud.server.HttpToken;
-import com.nfcat.cloud.sql.entity.NfUser;
+import com.nfcat.cloud.service.HttpToken;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -25,12 +22,17 @@ import javax.servlet.http.HttpServletResponse;
 @RequiredArgsConstructor
 public class PermissionInterceptor implements HandlerInterceptor {
 
-    public final RedisUtil redisUtil;
+    public final RedisUtilService redisUtil;
 
     @Override
     public boolean preHandle(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler) {
         //TODO 权限拦截
         if (handler instanceof HandlerMethod method) {
+            //验证权限
+            final AutoAuthentication methodAnnotation = method.getMethodAnnotation(AutoAuthentication.class);
+            final AutoAuthentication an = methodAnnotation == null ?
+                    method.getMethod().getDeclaringClass().getAnnotation(AutoAuthentication.class) : methodAnnotation;
+            if (an == null) return true;
             //验证是否有token
             if (!method.hasMethodAnnotation(AutoGenToken.class)
                     && HttpToken.getRequestTokenString(request) == null) {
@@ -38,27 +40,8 @@ public class PermissionInterceptor implements HandlerInterceptor {
             }
             HttpToken httpToken = new HttpToken(redisUtil, request, response);
             request.setAttribute(ConstantData.HTTP_TOKEN, httpToken);
-            //验证权限
-            final AutoAuthentication methodAnnotation = method.getMethodAnnotation(AutoAuthentication.class);
-            final AutoAuthentication an = methodAnnotation == null ?
-                    method.getMethod().getDeclaringClass().getAnnotation(AutoAuthentication.class) : methodAnnotation;
-            if (an == null) return true;
-            switch (an.value()) {
-                case VISITOR -> {
-                    return true;
-                }
-                case USER -> {
-                    if (!(httpToken.getAttribute(ConstantData.USER_SESSION_DATA) instanceof NfUser)) {
-                        throw new AssertException(ResultCode.USER_NOT_LOGIN);
-                    }
-                }
-                case ADMIN -> {
-                    if (httpToken.getAttribute(ConstantData.USER_SESSION_DATA) instanceof NfUser nfUser
-                            && TypeConversionTool.toInt(nfUser.getUserGroup().substring(0, 1), 0) > 7) {
-                        return true;
-                    }
-                    throw new CloudException(ResultCode.USER_NO_PERMISSION);
-                }
+            if (!an.value().hasPermission(httpToken.getAttribute(ConstantData.USER_SESSION_DATA))) {
+                throw new AssertException(ResultCode.USER_NO_PERMISSION);
             }
         }
         return true;

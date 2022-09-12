@@ -22,7 +22,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.ConstraintViolationException;
+import javax.validation.ValidationException;
 import java.sql.SQLException;
+import java.util.Map;
 
 
 @Slf4j
@@ -43,14 +45,14 @@ public class ExceptionInterceptor implements ErrorController {
     @ResponseBody
     @ExceptionHandler(value = {HttpMessageNotReadableException.class, BadSqlGrammarException.class})
     public String httpMessageNotReadableException(Exception ex) {
-        return errorJSON(ex, ResultCode.VALIDATE_FAILED.format());
+        return errorJSON(ex, ResultCode.VALIDATE_FAILED);
     }
 
     //缺少参数
     @ResponseBody
     @ExceptionHandler(value = MissingParametersException.class)
     public String missingParametersException(Exception ex) {
-        return errorJSON(ex, ResultCode.MISSING_PARAMETERS.format());
+        return errorJSON(ex, ResultCode.MISSING_PARAMETERS);
     }
 
     //参数异常
@@ -63,18 +65,27 @@ public class ExceptionInterceptor implements ErrorController {
     //验证异常
     @ResponseBody
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
-    public String methodArgumentNotValidException(MethodArgumentNotValidException ex) {
+    public String methodArgumentNotValidException(@NotNull MethodArgumentNotValidException ex) {
         StringBuilder stringBuilder = new StringBuilder();
         ex.getBindingResult().getAllErrors().forEach(a -> stringBuilder.append(d).append(a.getDefaultMessage()));
         stringBuilder.deleteCharAt(0);
         return errorJSON(ex, new JsonResponse(1002, stringBuilder.toString()));
     }
 
+    //验证异常2
+    @ResponseBody
+    @ExceptionHandler(value = ValidationException.class)
+    public String validationException(@NotNull ValidationException ex) {
+        final Throwable cause = ex.getCause();
+        if (cause == null) return errorJSON(ex, ResultCode.VALIDATE_FAILED);
+        return errorJSON(ex, new JsonResponse(1002, cause.getMessage()));
+    }
+
     //上传文件失败
     @ResponseBody
     @ExceptionHandler(value = UploadException.class)
     public String uploadException(Exception ex) {
-        return errorJSON(ex, ResultCode.UPLOAD_ERROR.format());
+        return errorJSON(ex, ResultCode.UPLOAD_ERROR);
     }
 
     //数据库错误
@@ -88,14 +99,14 @@ public class ExceptionInterceptor implements ErrorController {
     @ResponseBody
     @ExceptionHandler(value = EmailSendException.class)
     public String emailSendException(Exception ex) {
-        return errorJSON(ex, ResultCode.FAILED_TO_SEND_MAIL);
+        return errorJSON(ex, ResultCode.EMAIL_SEND_ERROR);
     }
 
-    //其他错误
+    //其他Cloud错误
     @ResponseBody
     @ExceptionHandler(value = CloudException.class)
     public String cloudException(CloudException ex) {
-        return errorJSON(ex, ex.getResultCode().format());
+        return errorJSON(ex, ex.getResultCode());
     }
 
     //404
@@ -112,11 +123,10 @@ public class ExceptionInterceptor implements ErrorController {
     }
 
     public ModelAndView errorHTML(int code, String msg) {
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("error");
-        modelAndView.addObject("code", code);
-        modelAndView.addObject("text", msg);
-        return modelAndView;
+        return new ModelAndView("error", Map.of(
+                "code", code,
+                "text", msg
+        ));
     }
 
     public ModelAndView errorHTML(Exception e, int code, String msg) {
@@ -125,7 +135,7 @@ public class ExceptionInterceptor implements ErrorController {
     }
 
     public String errorJSON(Exception e, @NotNull ResultCode resultCode) {
-        return errorJSON(e, resultCode.format());
+        return errorJSON(e, resultCode.toJsonResponse());
     }
 
     public String errorJSON(Exception e, JsonResponse jsonResponse) {

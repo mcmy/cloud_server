@@ -5,7 +5,10 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 public class ConstantData {
     public static final String IMG_VERIFY_CODE = "img_verify_code";
     public static final String IMG_VERIFY_TIME = "img_verify_time";
-    public static final String VERIFY_CODE = "verify_code";
+    public static final String PHONE_VERIFY_CODE = "phone_verify_code";
+    public static final String PHONE_VERIFY_TIME = "phone_verify_code_time";
+    public static final String EMAIL_VERIFY_CODE = "email_verify_code";
+    public static final String EMAIL_VERIFY_TIME = "email_verify_code_time";
     public static final String USER_SESSION_DATA = "userData";
     public static final String LOGIN_TIME = "loginTime";
     public static final String REQUEST_ATTR_MAP = "requestMap";

@@ -14,14 +14,14 @@ import org.jetbrains.annotations.NotNull;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class JsonResponse {
+public class JsonResponse<T> {
 
     @JSONField(ordinal = 1)
     public int code = 200;
     @JSONField(ordinal = 2)
     public String msg = "操作成功";
     @JSONField(ordinal = 3)
-    public Object data;
+    public T data;
 
     public JsonResponse(int code, String msg) {
         this.code = code;
@@ -33,7 +33,7 @@ public class JsonResponse {
         this.msg = resultCode.getMsg();
     }
 
-    public JsonResponse(@NotNull ResultCode resultCode, Object data) {
+    public JsonResponse(@NotNull ResultCode resultCode, T data) {
         this.code = resultCode.getCode();
         this.msg = resultCode.getMsg();
         this.data = data;

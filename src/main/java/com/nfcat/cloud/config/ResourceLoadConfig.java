@@ -65,4 +65,9 @@ public class ResourceLoadConfig {
         configurer.setFreemarkerVariables(variables);
         return configurer;
     }
+//
+//    @Bean
+//    public TaglibFactory taglibFactory(){
+//        return freeMarkerConfigurer().getTaglibFactory();
+//    }
 }

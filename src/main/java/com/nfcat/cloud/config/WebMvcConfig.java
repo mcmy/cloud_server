@@ -3,6 +3,7 @@ package com.nfcat.cloud.config;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+import com.nfcat.cloud.interceptor.AccessLimitInterceptor;
 import com.nfcat.cloud.interceptor.PermissionInterceptor;
 import com.nfcat.cloud.interceptor.RequestInitInterceptor;
 import com.nfcat.cloud.interceptor.ResponseFormatJsonInterceptor;
@@ -25,9 +26,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WebMvcConfig implements WebMvcConfigurer {
 
-    private final RequestInitInterceptor characterEncoding;
-    private final ResponseFormatJsonInterceptor responseFormatJsonInterceptor;
+    private final RequestInitInterceptor requestInitInterceptor;
     private final PermissionInterceptor permissionInterceptor;
+    private final AccessLimitInterceptor accessLimitInterceptor;
+
+    private final ResponseFormatJsonInterceptor responseFormatJsonInterceptor;
 
     @Override
     public void addReturnValueHandlers(@NotNull List<HandlerMethodReturnValueHandler> returnValueHandlers) {
@@ -37,8 +40,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(@NotNull InterceptorRegistry registry) {
-        registry.addInterceptor(characterEncoding);
+        //顺序不可变
+        registry.addInterceptor(requestInitInterceptor);
         registry.addInterceptor(permissionInterceptor);
+        registry.addInterceptor(accessLimitInterceptor);
     }
 
     @Override

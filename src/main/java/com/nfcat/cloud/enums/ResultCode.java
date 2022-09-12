@@ -37,9 +37,8 @@ public enum ResultCode implements Serializable {
     FORBIDDEN_TO_LOGIN(2003, "用户被禁止登录"),
     REGISTER_FAILED(2004, "注册失败"),
     IS_EXIST_USER(2005, "用户名已被注册"),
-    FAILED_TO_SEND_MAIL(2006, "邮件发送失败"),
-    PASSWORD_IS_TOO_SIMPLE(2007, "密码过于简单"),
-    LOGIN_FAIL(2008, "登录失败"),
+    PASSWORD_IS_TOO_SIMPLE(2006, "密码过于简单"),
+    LOGIN_FAIL(2007, "登录失败"),
 
     //鉴权验证
     USER_NO_PERMISSION(2101, "权限不足"),
@@ -52,6 +51,7 @@ public enum ResultCode implements Serializable {
     EMAIL_FORMAT_ERROR(2108, "邮箱格式错误"),
     PHONE_CODE_ERROR_TIMES_FILL(2109, "验证码错误次数过多，请重新获取验证码"),
     MISSING_PARAMETERS(2110, "参数缺失"),
+    FREQUENT_OPERATION(2111, "操作频繁"),
 
     //格式验证
     USER_USERNAME_INPUT_FAIL(2201, "用户名格式错误"),
@@ -64,6 +64,7 @@ public enum ResultCode implements Serializable {
     VERIFY_CODE_TIME_OVERDUE(3001, "验证码过期"),
     NOT_TOKEN(3002, "无TOKEN"),
     REDIS_SERVER_ERROR(3003, "Redis服务异常"),
+    EMAIL_SEND_ERROR(3004, "邮件发送失败"),
 
     //数据操作错误
     INSERT_FAILED(4000, "插入失败"),
@@ -85,17 +86,15 @@ public enum ResultCode implements Serializable {
     }
 
     @Contract(value = " -> new", pure = true)
-    public @NotNull JsonResponse format() {
+    public @NotNull
+    JsonResponse toJsonResponse() {
         return new JsonResponse(code, msg);
     }
 
-    @Contract("_ -> new")
-    public static @NotNull JsonResponse format(@NotNull ResultCode resultCode) {
-        return new JsonResponse(resultCode.getCode(), resultCode.getMsg());
+    @Contract(value = "_ -> new", pure = true)
+    public @NotNull
+    JsonResponse toJsonResponse(Object o) {
+        return new JsonResponse(code, msg, o);
     }
 
-    @Contract("_, _ -> new")
-    public static @NotNull JsonResponse format(@NotNull ResultCode resultCode, Object object) {
-        return new JsonResponse(resultCode.getCode(), resultCode.getMsg(), object);
-    }
 }

@@ -20,6 +20,12 @@ import java.lang.annotation.*;
 @Slf4j
 public class UserReg {
 
+    public static class RegType{
+        public static final String USERNAME = "username";
+        public static final String EMAIL = "email";
+        public static final String PHONE = "phone";
+    }
+
     @Data
     @VerifyAnnotation
     @NoArgsConstructor
@@ -43,24 +49,25 @@ public class UserReg {
         }
     }
 
-    static class RequestDataValidator implements ConstraintValidator<VerifyAnnotation, RequestData>, RequestValidateInterface {
+    @NoArgsConstructor
+    public static class RequestDataValidator implements ConstraintValidator<VerifyAnnotation, RequestData>, RequestValidateInterface {
         @Override
-        public boolean isValid(@NotNull UserReg.RequestData data, ConstraintValidatorContext context) {
+        public boolean isValid(@NotNull RequestData data, ConstraintValidatorContext context) {
             if (!MatcherString.PASSWORD.matcher(data.getPassword())) doErrMsg(ResultCode.USER_PASSWORD_INPUT_FAIL);
             if (data.getVerifyCode() == null || data.getVerifyCode().length() < 1)
                 doErrMsg(ResultCode.VERIFY_CODE_FAILED);
             switch (data.getType()) {
-                case "phone" -> {
+                case RegType.PHONE -> {
                     if (!MatcherString.PHONE.matcher(data.getPhone()))
                         doErrMsg(ResultCode.PHONE_FORMAT_ERROR);
                     return true;
                 }
-                case "email" -> {
+                case RegType.EMAIL -> {
                     if (!MatcherString.EMAIL.matcher(data.getEmail()))
                         doErrMsg(ResultCode.EMAIL_FORMAT_ERROR);
                     return true;
                 }
-                case "username" -> {
+                case RegType.USERNAME -> {
                     if (!MatcherString.USERNAME.matcher(data.getUsername()))
                         doErrMsg(ResultCode.USER_USERNAME_INPUT_FAIL);
                     return true;

@@ -3,10 +3,10 @@ package com.nfcat.cloud.interceptor;
 import com.alibaba.fastjson.JSON;
 import com.nfcat.cloud.annotation.JSONBody;
 import com.nfcat.cloud.annotation.JSONBodyExclude;
+import com.nfcat.cloud.service.RedisUtilService;
 import com.nfcat.cloud.data.JsonResponse;
 import com.nfcat.cloud.enums.ConstantData;
 import com.nfcat.cloud.enums.ResultCode;
-import com.nfcat.cloud.common.utils.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 @RequiredArgsConstructor
 public class ResponseFormatJsonInterceptor implements HandlerMethodReturnValueHandler, AsyncHandlerMethodReturnValueHandler {
 
-    public final RedisUtil redisUtil;
+    public final RedisUtilService redisUtil;
     private boolean cache = false;
     private String field;
     private long t;
@@ -50,10 +50,12 @@ public class ResponseFormatJsonInterceptor implements HandlerMethodReturnValueHa
         assert request != null && response != null;
         response.setContentType("application/json;charset=utf-8");
         JsonResponse returnValue;
-        if (returnValueObject instanceof JsonResponse jsonResponse) {
+        if (returnValueObject instanceof ResultCode resultCode) {
+            returnValue = resultCode.toJsonResponse();
+        } else if (returnValueObject instanceof JsonResponse jsonResponse) {
             returnValue = jsonResponse;
         } else {
-            returnValue = ResultCode.format(ResultCode.SUCCESS, returnValueObject);
+            returnValue = ResultCode.SUCCESS.toJsonResponse(returnValueObject);
         }
 
         //获取方法（类）上的参数

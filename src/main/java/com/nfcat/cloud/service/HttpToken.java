@@ -1,7 +1,6 @@
-package com.nfcat.cloud.server;
+package com.nfcat.cloud.service;
 
 import com.nfcat.cloud.common.utils.NanoIdUtils;
-import com.nfcat.cloud.common.utils.RedisUtil;
 import com.nfcat.cloud.data.Token;
 import com.nfcat.cloud.enums.ConstantData;
 import com.nfcat.cloud.enums.ResultCode;
@@ -16,12 +15,14 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-@Getter
 public class HttpToken {
 
-    private final RedisUtil redisUtil;
+    @Getter
+    private final RedisUtilService redisUtil;
+    @Getter
     private final Token token;
 
+    @Getter
     private String redisPrefix;
 
     private static final String tokenName = "X-AUTH-TOKEN";
@@ -45,11 +46,12 @@ public class HttpToken {
 
     /**
      * 新建token
+     *
      * @param redisUtil RedisUtil
-     * @param request HttpServletRequest
-     * @param response HttpServletResponse
+     * @param request   HttpServletRequest
+     * @param response  HttpServletResponse
      */
-    public HttpToken(RedisUtil redisUtil, HttpServletRequest request, HttpServletResponse response) {
+    public HttpToken(RedisUtilService redisUtil, HttpServletRequest request, HttpServletResponse response) {
         this.redisUtil = redisUtil;
         this.token = new Token();
         final String requestTokenString = getRequestTokenString(request);
@@ -67,7 +69,7 @@ public class HttpToken {
                 .setCreateTime(now)
                 .setRefreshTime(now);
         redisPrefix = redisPrefixPrefix + token.getToken();
-        redisUtil.hmset(redisPrefix,token.buildMap(),refreshSeconds);
+        redisUtil.hmset(redisPrefix, token.buildMap(), refreshSeconds);
         response.setHeader(tokenName, token.getToken());
     }
 
@@ -91,7 +93,8 @@ public class HttpToken {
 
     /**
      * 设置输入tokenString Attr
-     * @param request HttpServletRequest
+     *
+     * @param request     HttpServletRequest
      * @param tokenString tokenString
      * @return tokenString
      */
@@ -102,6 +105,7 @@ public class HttpToken {
 
     /**
      * 验证token是否过期
+     *
      * @return is
      */
     public boolean validRedisToken() {
@@ -117,6 +121,7 @@ public class HttpToken {
 
     /**
      * 续期token
+     *
      * @return Token
      */
     public @NotNull Token refreshToken() {
@@ -171,5 +176,13 @@ public class HttpToken {
 
     public boolean setAttribute(String item, Object data) {
         return redisUtil.hset(redisPrefix, itemPrefix + item, data);
+    }
+
+    public Long increment(String key) {
+        return redisUtil.redisTemplate.opsForHash().increment(redisPrefix, "incr-" + key, 1);
+    }
+
+    public Long increment(String key, long incrementValue) {
+        return redisUtil.redisTemplate.opsForHash().increment(redisPrefix, "incr-" + key, incrementValue);
     }
 }

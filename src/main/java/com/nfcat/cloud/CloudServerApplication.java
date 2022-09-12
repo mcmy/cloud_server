@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 public class CloudServerApplication {
 
     public static void main(String[] args){
-        SpringApplication.run(CloudServerApplication.class, args);
+         SpringApplication.run(CloudServerApplication.class, args);
     }
 
 }
