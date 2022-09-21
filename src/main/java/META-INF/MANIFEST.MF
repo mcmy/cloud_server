@@ -1,0 +1,48 @@
+Manifest-Version: 1.0
+Main-Class: com.nfcat.cloud.CloudServerApplication
+Class-Path: spring-boot-starter-jdbc-2.7.0.jar spring-boot-actuator-2.7.
+ 0.jar spring-boot-autoconfigure-2.7.0.jar spring-boot-starter-freemarke
+ r-2.7.0.jar jakarta.validation-api-2.0.2.jar spring-data-commons-2.7.0.
+ jar slf4j-api-1.7.36.jar jakarta.activation-1.2.2.jar activation-1.1.ja
+ r spring-boot-configuration-processor-2.7.0.jar tencentcloud-sdk-java-k
+ ms-3.1.213.jar jackson-core-2.13.3.jar spring-context-5.3.20.jar jackso
+ n-module-parameter-names-2.13.3.jar HdrHistogram-2.1.12.jar classmate-1
+ .5.1.jar commons-io-2.11.0.jar spring-context-support-5.3.20.jar fastjs
+ on2-extension-2.0.7.graal.jar freemarker-2.3.31.jar jackson-datatype-jd
+ k8-2.13.3.jar okio-1.12.0.jar mybatis-plus-boot-starter-3.5.2.jar log4j
+ -core-2.17.2.jar cos_api-5.6.89.jar spring-boot-starter-actuator-2.7.0.
+ jar spring-data-keyvalue-2.7.0.jar annotations-23.0.0.jar commons-codec
+ -1.15.jar bcprov-jdk15on-1.67.jar hibernate-validator-6.2.3.Final.jar k
+ otlin-stdlib-jdk8-1.6.21.jar spring-aop-5.3.20.jar tomcat-embed-core-9.
+ 0.63.jar lombok-1.18.24.jar commons-pool2-2.11.1.jar httpcore-4.4.15.ja
+ r tomcat-embed-websocket-9.0.63.jar LatencyUtils-2.0.3.jar spring-data-
+ redis-2.7.0.jar nutz-1.r.69.20210929.jar spring-jdbc-5.3.20.jar spring-
+ boot-devtools-2.7.0.jar fastjson-2.0.7.graal.jar jackson-databind-2.13.
+ 3.jar spring-boot-starter-mail-2.7.0.jar netty-handler-4.1.77.Final.jar
+  jsqlparser-4.4.jar joda-time-2.9.9.jar junit-4.13.2.jar spring-boot-st
+ arter-data-redis-2.7.0.jar httpclient-4.5.13.jar spring-boot-2.7.0.jar 
+ jakarta.mail-1.6.7.jar spring-boot-actuator-autoconfigure-2.7.0.jar jbo
+ ss-logging-3.4.3.Final.jar jnanoid-2.0.0.jar micrometer-core-1.9.0.jar 
+ spring-boot-starter-json-2.7.0.jar kotlin-stdlib-1.6.21.jar disruptor-3
+ .4.4.jar spring-expression-5.3.20.jar spring-web-5.3.20.jar HikariCP-4.
+ 0.3.jar log4j-jul-2.17.2.jar mybatis-plus-3.5.2.jar mail-1.4.7.jar log4
+ j-web-2.17.2.jar commons-lang3-3.12.0.jar lettuce-core-6.1.8.RELEASE.ja
+ r jackson-datatype-jsr310-2.13.3.jar netty-common-4.1.77.Final.jar spri
+ ng-tx-5.3.20.jar log4j-slf4j-impl-2.17.2.jar jakarta.annotation-api-1.3
+ .5.jar spring-core-5.3.20.jar tencentcloud-sdk-java-common-3.1.213.jar 
+ hamcrest-core-2.2.jar jackson-annotations-2.13.3.jar netty-codec-4.1.77
+ .Final.jar mybatis-3.5.10.jar netty-transport-4.1.77.Final.jar netty-re
+ solver-4.1.77.Final.jar log4j-api-2.17.2.jar spring-webmvc-5.3.20.jar k
+ otlin-stdlib-jdk7-1.6.21.jar logging-interceptor-2.7.5.jar netty-buffer
+ -4.1.77.Final.jar spring-boot-starter-2.7.0.jar mybatis-spring-2.0.7.ja
+ r tomcat-embed-el-9.0.63.jar mybatis-plus-annotation-3.5.2.jar hamcrest
+ -2.2.jar spring-jcl-5.3.20.jar spring-boot-starter-tomcat-2.7.0.jar fas
+ tjson2-2.0.7.graal.jar spring-boot-starter-validation-2.7.0.jar wxpay-s
+ dk-0.0.3.jar jaxb-api-2.3.1.jar kotlin-stdlib-common-1.6.21.jar mybatis
+ -plus-core-3.5.2.jar spring-boot-starter-log4j2-2.7.0.jar snakeyaml-1.3
+ 0.jar commons-logging-1.2.jar okhttp-2.7.5.jar mysql-connector-java-8.0
+ .29.jar gson-2.9.0.jar reactive-streams-1.0.3.jar mybatis-plus-extensio
+ n-3.5.2.jar spring-boot-starter-web-2.7.0.jar jul-to-slf4j-1.7.36.jar s
+ pring-beans-5.3.20.jar reactor-core-3.4.18.jar javax.activation-api-1.2
+ .0.jar spring-oxm-5.3.20.jar
+

@@ -2,6 +2,8 @@ package com.nfcat.cloud.service.impl;
 
 import com.nfcat.cloud.enums.ResultCode;
 import com.nfcat.cloud.exception.AssertException;
+import com.nfcat.cloud.interceptor.AccessLimitInterceptor;
+import com.nfcat.cloud.service.RedisUtilService;
 import com.nfcat.cloud.service.interfaces.AccessLimitVerificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,14 +19,26 @@ import java.nio.charset.StandardCharsets;
 @RequiredArgsConstructor
 public class AccessLimitVerificationServiceImpl implements AccessLimitVerificationService {
 
+    public final RedisUtilService redisUtilService;
+
     @Override
     public boolean verify(HttpServletRequest request) {
         throw new AssertException(ResultCode.FREQUENT_OPERATION);
     }
 
     @Override
+    public void liftTheBan(HttpServletRequest request) {
+        String key = AccessLimitInterceptor.accessLimitRedisPrefix + getClientID(request);
+        try {
+            redisUtilService.del(key);
+        } catch (Exception ignored) {
+            log.info("lift the ban failed");
+        }
+    }
+
+    @Override
     public String getClientID(@NotNull HttpServletRequest request) {
-       return DigestUtils.md5DigestAsHex((request.getServletPath() + getIpAddr(request)).getBytes(StandardCharsets.UTF_8));
+        return DigestUtils.md5DigestAsHex((request.getServletPath() + getIpAddr(request)).getBytes(StandardCharsets.UTF_8));
     }
 
     public String getIpAddr(@NotNull HttpServletRequest request) {

@@ -105,7 +105,7 @@ public class CommonAPI {
      *
      * @return Response Token
      */
-    @AccessLimit(maxCount = 1, seconds = 2)
+    @AccessLimit(maxCount = 5, seconds = 30)
     @AutoGenToken
     @AutoAuthentication(Permission.VISITOR)
     @RequestMapping("/getToken")
@@ -156,7 +156,6 @@ public class CommonAPI {
             return nfUser;
         }
         return ResultCode.USER_NOT_LOGIN;
-
     }
 
     /**
