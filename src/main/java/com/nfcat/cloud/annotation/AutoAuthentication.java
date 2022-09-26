@@ -6,7 +6,7 @@ import java.lang.annotation.*;
 
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD,ElementType.TYPE})
+@Target({ElementType.METHOD, ElementType.TYPE})
 public @interface AutoAuthentication {
-    Permission value() default Permission.USER;
+    int value() default Permission.USER;
 }

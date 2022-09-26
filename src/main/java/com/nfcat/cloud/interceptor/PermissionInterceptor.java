@@ -2,11 +2,12 @@ package com.nfcat.cloud.interceptor;
 
 import com.nfcat.cloud.annotation.AutoAuthentication;
 import com.nfcat.cloud.annotation.AutoGenToken;
-import com.nfcat.cloud.service.RedisUtilService;
 import com.nfcat.cloud.enums.ConstantData;
+import com.nfcat.cloud.enums.Permission;
 import com.nfcat.cloud.enums.ResultCode;
 import com.nfcat.cloud.exception.AssertException;
 import com.nfcat.cloud.service.HttpToken;
+import com.nfcat.cloud.service.RedisUtilService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +41,7 @@ public class PermissionInterceptor implements HandlerInterceptor {
             }
             HttpToken httpToken = new HttpToken(redisUtil, request, response);
             request.setAttribute(ConstantData.HTTP_TOKEN, httpToken);
-            if (!an.value().hasPermission(httpToken.getAttribute(ConstantData.USER_SESSION_DATA))) {
+            if (!Permission.hasPermission(httpToken.getAttribute(ConstantData.USER_SESSION_DATA), an.value())) {
                 throw new AssertException(ResultCode.USER_NO_PERMISSION);
             }
         }
